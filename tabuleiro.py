@@ -96,6 +96,9 @@ class Tabuleiro():
     
     #Retorna coluna corespondente à uma posição X na tela
     def getColunaX(self, x):
+        if (x < X_INICIO_TABULEIRO or X_INICIO_TABULEIRO > X_INICIO_TABULEIRO + self.getColunas() * TAMANHO_ESPACO):
+            return COLUNA_NAO_SELECIONADA
+        
         return int(math.floor((x - X_INICIO_TABULEIRO ) / TAMANHO_ESPACO))
     
     #Mostra texto da vitória de algum agente
