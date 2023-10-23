@@ -1,5 +1,8 @@
 import numpy as np
 
+from agente import Agente
+from jogador import Jogador
+
 LINHAS = 6
 COLUNAS = 7
 
@@ -13,9 +16,6 @@ def iniciar_tabuleiro():
 def mostrar_tabuleiro(tabuleiroPrint):
     for linha in range(LINHAS):
         print(tabuleiroPrint[linha])
-
-def posicionar(tabuleiroAux, linha, coluna, player):
-    tabuleiroAux[linha][coluna] = player
 
 #Retorna true caso o player tenha vencido com o ultimo movimento
 def verificar_vitoria(tabuleiroAux, player):
@@ -47,16 +47,21 @@ def verificar_vitoria(tabuleiroAux, player):
     return False
 
 parar = False
-
 tabuleiroReal = iniciar_tabuleiro()
 
-mostrar_tabuleiro(tabuleiroReal)
+agentes = [Jogador(PLAYER_1), Jogador(PLAYER_2)]
 
-while not parar:
-    linha = int(input("Linha: "))
-    coluna = int(input("Coluna: "))
+if __name__ == "__main__":
 
-    posicionar(tabuleiroReal, linha, coluna, PLAYER_1)
-    mostrar_tabuleiro(tabuleiroReal)
+    while not parar:
 
-    parar = verificar_vitoria(tabuleiroReal, PLAYER_1)    
+        for agente in agentes:
+            mostrar_tabuleiro(tabuleiroReal)
+            
+            agente.jogar(tabuleiroReal)
+            parar = verificar_vitoria(tabuleiroReal, agente.getId())    
+
+            if parar:
+                print("Vitória do agente: " + agente.getId())
+                mostrar_tabuleiro(tabuleiroReal)
+                break
