@@ -121,8 +121,8 @@ class AgenteIA(Agente):
             coluna = None
 
             for coluna in colunasLivres:
-                #Copia auxilia do tabuleiro para avaliar as variações em recursivo
-                tabuleiroAux = tabuleiro.copy()
+                #Copia auxiliar do tabuleiro para avaliar as variações em recursivo / Implementação de __copy__ não estava funcionando
+                tabuleiroAux = Tabuleiro(tabuleiro.getLinhas(), tabuleiro.getColunas(), tabuleiro.getMatriz().copy())
                 tabuleiroAux.posiciona(coluna, idAdversario)
 
                 colunaAux, heuristicaFilho = self.buscaColunaMinMax(tabuleiroAux, profundidade - 1, alpha, beta, self.getId())
@@ -142,8 +142,8 @@ class AgenteIA(Agente):
             coluna = None
 
             for coluna in colunasLivres:
-                #Copia auxilia do tabuleiro para avaliar as variações em recursivo
-                tabuleiroAux = tabuleiro.copy()
+                #Copia auxiliar do tabuleiro para avaliar as variações em recursivo / Implementação de __copy__ não estava funcionando
+                tabuleiroAux = Tabuleiro(tabuleiro.getLinhas(), tabuleiro.getColunas(), tabuleiro.getMatriz().copy())
                 tabuleiroAux.posiciona(coluna, self.getId())
 
                 colunaAux, heuristicaFilho = self.buscaColunaMinMax(tabuleiroAux, profundidade - 1, alpha, beta, idAdversario)

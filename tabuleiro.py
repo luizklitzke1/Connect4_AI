@@ -4,11 +4,14 @@ LINHA_INVALIDA = -1
 
 class Tabuleiro():
     
-    def __init__(self, linhas, colunas):
+    def __init__(self, linhas, colunas, matriz = None):
         self.setLinhas(linhas)
         self.setColunas(colunas)
 
-        self.matriz = np.zeros((self.getLinhas(), self.getColunas()))
+        if matriz is None:
+            self.matriz = np.zeros((self.getLinhas(), self.getColunas()))
+        else:
+            self.matriz = matriz
 
     def getLinhas(self):
         return self.linhas
@@ -35,8 +38,9 @@ class Tabuleiro():
     #Primeira linha livre de baixo para cima na coluna. Caso nenhuma, retorna LINHA_INVALIDA
     def getPosicaoLivreColuna(self, coluna):
         for linha in range(self.getLinhas()):
-            if (self.getMatriz()[self.getLinhas() - 1 - linha][coluna] == 0):
-                return linha
+            linhaBaixoParaCima = self.getLinhas() - 1 - linha
+            if (self.getMatriz()[linhaBaixoParaCima][coluna] == 0):
+                return linhaBaixoParaCima
             
         return LINHA_INVALIDA #Coluna completamente preenchida
     
@@ -46,16 +50,19 @@ class Tabuleiro():
 
         for coluna in range(self.getColunas()):
             if (self.getPosicaoLivreColuna(coluna) != LINHA_INVALIDA):
-                colunasLivres.insert(coluna)
+                colunasLivres.append(coluna)
+
+        return colunasLivres
 
     #Posiciona uma peça do agente no primeiro espaço livre, de baixo para cima, da coluna
-    def posiciona(self, coluna, agente):
+    def posiciona(self, coluna, IdAgente):
         linhaPosicionar = self.getPosicaoLivreColuna(coluna)
 
         if linhaPosicionar == LINHA_INVALIDA:
             return False #Coluna inválida
         
-        self.getMatriz()[linhaPosicionar][coluna] = agente.getId()
+        self.getMatriz()[linhaPosicionar][coluna] = IdAgente
+        return True
             
 
     #Retorna true caso o agente tenha vencido com o ultimo movimento

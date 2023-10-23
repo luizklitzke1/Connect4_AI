@@ -11,15 +11,16 @@ PLAYER_2 = 2
 vitoria = False
 tabuleiroReal = Tabuleiro(LINHAS, COLUNAS)
 
-agentes = [Jogador(PLAYER_1), Jogador(PLAYER_2)]
+agentes = [Jogador(PLAYER_1), AgenteIA(PLAYER_2)]
 
 if __name__ == "__main__":
 
     while not vitoria:
 
         for agente in agentes:
+
             tabuleiroReal.printMatriz()
-            
+            print("\nJogada do agente: ", agente.getId(), "\n")
             agente.jogar(tabuleiroReal)
             vitoria = tabuleiroReal.verificarVitoria(agente.getId())    
 
