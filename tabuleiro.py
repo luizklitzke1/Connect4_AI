@@ -1,25 +1,7 @@
 import numpy as np
 import pygame as pg
-
-AGENTE_1 = 1
-AGENTE_2 = 2
-
-LINHA_INVALIDA = -1
-
-COR_VERMELHO = (255, 0 , 0  )
-COR_AZUL     = (0  , 0 , 255)
-COR_AMARELO  = (255,255, 0  )
-COR_PRETO    = (0  , 0 , 0  )
-
-COR_TABULEIRO = COR_AZUL
-COR_AGENTE_1  = COR_AMARELO
-COR_AGENTE_2  = COR_VERMELHO
-COR_VAZIO     = COR_PRETO
-
-TAMANHO_ESPACO = 70
-RAIO_PECA = TAMANHO_ESPACO / 2 - 3
-X_INICIO_TABULEIRO = 150
-Y_INICIO_TABULEIRO = 120
+import math
+from defines import *
 
 class Tabuleiro():
     
@@ -111,6 +93,10 @@ class Tabuleiro():
                     return True
                 
         return False
+    
+    #Retorna coluna corespondente à uma posição X na tela
+    def getColunaX(self, x):
+        return int(math.floor((x - X_INICIO_TABULEIRO ) / TAMANHO_ESPACO))
     
     def getLinhas(self):
         return self.linhas

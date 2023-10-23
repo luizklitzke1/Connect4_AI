@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 #Classe base para ser usada de herança
 class Agente():
@@ -13,5 +13,5 @@ class Agente():
         self.id = id
 
     @abstractmethod
-    def jogar(self, tabuleiro):
+    def jogar(self, tabuleiro, tela):
         pass

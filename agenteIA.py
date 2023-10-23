@@ -1,15 +1,6 @@
-import math
-
+from defines import *
 from agente import Agente
-from tabuleiro import Tabuleiro, AGENTE_1, AGENTE_2
-
-INFINITO_POSITIVO =  math.inf
-INFINITO_NEGATIVO = -math.inf
-
-VALOR_HEURISTICA_BAIXO = 10
-VALOR_HEURISTICA_MEDIO = 100
-VALOR_HEURISTICA_ALTO  = 100000
-
+from tabuleiro import Tabuleiro
 
 class AgenteIA(Agente):
     #Define o valor de um determinado estado do tabuleiro
@@ -174,7 +165,7 @@ class AgenteIA(Agente):
 
             return colunaRet, valorHeuristica
         
-    def jogar(self, tabuleiro):
+    def jogar(self, tabuleiro, tela):
         coluna, valorMinMax = self.buscaColunaMinMax(tabuleiro, tabuleiro.getLinhas() - 1, INFINITO_NEGATIVO, INFINITO_POSITIVO, AGENTE_2 if self.getId() ==  AGENTE_1 else AGENTE_1)
 
         tabuleiro.posiciona(coluna, self.getId())
