@@ -6,15 +6,91 @@ from tabuleiro import Tabuleiro
 INFINITO_POSITIVO =  math.inf
 INFINITO_NEGATIVO = -math.inf
 
+VALOR_HEURISTICA_BAIXO = 10
+VALOR_HEURISTICA_MEDIO = 100
+
 PLAYER_1 = 1
 PLAYER_2 = 2
 
 class AgenteIA(Agente):
     #Define o valor de um determinado estado do tabuleiro
-    def calculaHeuristica(self, tabuleiro, agente):
+    def calculaHeuristica(self, tabuleiro):
         matriz = tabuleiro.getMatriz()
 
-        return 99        
+        valorHeuristica = 0
+
+        for linha in range(tabuleiro.getLinhas()):
+            for coluna in range(tabuleiro.getColunas()):
+
+                try: #Linhas horizontais
+
+                    #PLAYER_1 adiciona valor
+                    if matriz[linha][coluna] == matriz[linha + 1][coluna] == PLAYER_1:
+                        valorHeuristica += VALOR_HEURISTICA_BAIXO
+                    if matriz[linha][coluna] == matriz[linha + 1][coluna] == matriz[linha + 2][coluna] == PLAYER_1:
+                        valorHeuristica += VALOR_HEURISTICA_MEDIO
+
+                    #PLAYER_2 subtrai valor
+                    if matriz[linha][coluna] == matriz[linha + 1][coluna] == PLAYER_2:
+                        valorHeuristica -= VALOR_HEURISTICA_BAIXO
+                    if matriz[linha][coluna] == matriz[linha + 1][coluna] == matriz[linha + 2][coluna] == PLAYER_2:
+                        valorHeuristica -= VALOR_HEURISTICA_MEDIO
+
+                except IndexError:
+                    pass
+
+                try: #Linhas verticais
+
+                    #PLAYER_1 adiciona valor
+                    if matriz[linha][coluna] == matriz[linha][coluna + 1] == PLAYER_1:
+                        valorHeuristica += VALOR_HEURISTICA_BAIXO
+                    if matriz[linha][coluna] == matriz[linha][coluna + 1] == matriz[linha][coluna + 2] == PLAYER_1:
+                        valorHeuristica += VALOR_HEURISTICA_MEDIO
+
+                    #PLAYER_2 subtrai valor
+                    if matriz[linha][coluna] == matriz[linha][coluna + 1] == 1:
+                        valorHeuristica -= VALOR_HEURISTICA_BAIXO
+                    if matriz[linha][coluna] == matriz[linha][coluna + 1] == matriz[linha][coluna + 2] == 1:
+                        valorHeuristica -= VALOR_HEURISTICA_MEDIO
+
+                except IndexError:
+                    pass
+
+                try: #Diagonais - Superior Esquerdo para Inferior Direito
+
+                    #PLAYER_1 adiciona valor
+                    if linha < tabuleiro.getLinhas() - 1 and coluna < tabuleiro.getColunas() - 1 and matriz[linha][coluna] == matriz[linha + 1][coluna + 1] == PLAYER_1:
+                        valorHeuristica += VALOR_HEURISTICA_BAIXO
+                    if linha < tabuleiro.getLinhas() - 2 and coluna < tabuleiro.getColunas() - 2 and matriz[linha][coluna] == matriz[linha + 1][coluna + 1] == matriz[linha + 2][coluna + 2] == PLAYER_1:
+                        valorHeuristica += VALOR_HEURISTICA_MEDIO
+
+                    #PLAYER_2 subtrai valor
+                    if linha < tabuleiro.getLinhas() - 1 and coluna < tabuleiro.getColunas() - 1 and matriz[linha][coluna] == matriz[linha + 1][coluna + 1] == PLAYER_2:
+                        valorHeuristica -= VALOR_HEURISTICA_BAIXO
+                    if linha < tabuleiro.getLinhas() - 2 and coluna < tabuleiro.getColunas() - 2 and matriz[linha][coluna] == matriz[linha + 1][coluna + 1] == matriz[linha + 2][coluna + 2] == PLAYER_2:
+                        valorHeuristica -= VALOR_HEURISTICA_MEDIO
+
+                except IndexError:
+                    pass
+
+                try: #Diagonais - Inferior Esquerdo para Superior Direito
+
+                    #PLAYER_1 adiciona valor
+                    if linha > 0 and coluna < tabuleiro.getColunas() - 1 and matriz[linha][coluna] == matriz[linha - 1][coluna + 1] == PLAYER_1:
+                        valorHeuristica += VALOR_HEURISTICA_BAIXO
+                    if linha > 1 and coluna < tabuleiro.getColunas() - 2 and matriz[linha][coluna] == matriz[linha - 1][coluna + 1] == matriz[linha - 2][coluna + 2] == PLAYER_1:
+                        valorHeuristica += VALOR_HEURISTICA_BAIXO
+
+                    #PLAYER_2 subtrai valor
+                    if linha > 0 and coluna < tabuleiro.getColunas() - 1 and matriz[linha][coluna] == matriz[linha - 1][coluna + 1] == PLAYER_2:
+                        valorHeuristica -= VALOR_HEURISTICA_BAIXO
+                    if linha > 1 and coluna < tabuleiro.getColunas() - 2 and matriz[linha][coluna] == matriz[linha - 1][coluna + 1] == matriz[linha - 2][coluna + 2] == PLAYER_2:
+                        valorHeuristica -= VALOR_HEURISTICA_BAIXO
+
+                except IndexError:
+                    pass
+
+        return valorHeuristica       
 
     #"Algorithms Explained – minimax and alpha-beta pruning" - https://www.youtube.com/watch?v=l-hh51ncgDI&ab_channel=SebastianLague
     def buscaColunaMinMax(self, tabuleiro, profundidade, alpha, beta, playerMaximizar):
@@ -38,7 +114,7 @@ class AgenteIA(Agente):
                     return (None, 0) #Nenhuma jogada válida
                 
             else: #Profundidade zero == ultimo nó possivel de expandir
-                return (None, self.calculaHeuristica(tabuleiro, self.getId()))
+                return (None, self.calculaHeuristica(tabuleiro))
             
         if playerMaximizar == idAdversario:
             valorHeuristica = INFINITO_NEGATIVO
