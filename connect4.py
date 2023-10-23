@@ -15,18 +15,16 @@ pg.display.set_caption("Connect 4 - Inteligência Artificial")
 
 if __name__ == "__main__":
 
+    tabuleiroReal.printMatriz(tela)
     while not vitoria:
 
         for agente in agentes:
 
-            tabuleiroReal.printMatriz(tela)
-
-            print("\nJogada do agente: ", agente.getId(), "\n")
             agente.jogar(tabuleiroReal, tela)
             vitoria = tabuleiroReal.verificarVitoria(agente.getId())    
 
             if vitoria:
-                print("Vitória do agente: ", agente.getId())
-                tabuleiroReal.printMatriz(tela)
-                a = int(input("a"))
+                tabuleiroReal.anunciaVitoria(tela, agente.getId())
+
+                hold = input("") #Segurar a tela aberta
                 break

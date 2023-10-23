@@ -165,7 +165,7 @@ class AgenteIA(Agente):
 
             return colunaRet, valorHeuristica
         
-    def jogar(self, tabuleiro, tela):
+    def onJogar(self, tabuleiro, tela):
         coluna, valorMinMax = self.buscaColunaMinMax(tabuleiro, tabuleiro.getLinhas() - 1, INFINITO_NEGATIVO, INFINITO_POSITIVO, AGENTE_2 if self.getId() ==  AGENTE_1 else AGENTE_1)
 
         tabuleiro.posiciona(coluna, self.getId())

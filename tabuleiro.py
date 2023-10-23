@@ -98,6 +98,20 @@ class Tabuleiro():
     def getColunaX(self, x):
         return int(math.floor((x - X_INICIO_TABULEIRO ) / TAMANHO_ESPACO))
     
+    #Mostra texto da vitória de algum agente
+    def anunciaVitoria(self, tela, idAgente):
+        mensagem = "Vitória do agente: " + str(idAgente)
+        print(mensagem)
+        self.printMatriz(tela)
+
+        pg.font.init()
+        pg.draw.rect(tela, COR_VAZIO, (0, TAMANHO_ESPACO / 2, LARGURA_DISPLAY , TAMANHO_ESPACO))
+
+        font = pg.font.SysFont("Comic Sans MS", int(TAMANHO_ESPACO / 2))
+        text_surface = font.render(mensagem, False, COR_AMARELO)
+        tela.blit(text_surface, (X_INICIO_TABULEIRO, TAMANHO_ESPACO / 2))
+        pg.display.flip()
+    
     def getLinhas(self):
         return self.linhas
     

@@ -4,7 +4,7 @@ import pygame as pg
 
 class Jogador(Agente):
 
-    def jogar(self, tabuleiro, tela):
+    def onJogar(self, tabuleiro, tela):
 
         posicionado = False
 

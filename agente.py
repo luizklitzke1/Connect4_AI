@@ -13,5 +13,10 @@ class Agente():
         self.id = id
 
     @abstractmethod
-    def jogar(self, tabuleiro, tela):
+    def onJogar(self, tabuleiro, tela):
         pass
+
+    def jogar(self, tabuleiro, tela):
+        print("\nJogada do agente: ", self.getId(), "\n")
+        self.onJogar(tabuleiro, tela)
+        tabuleiro.printMatriz(tela)
