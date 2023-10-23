@@ -12,9 +12,6 @@ class Agente():
     def setId(self, id):
         self.id = id
 
-    def posicionar(self, tabuleiroAux, linha, coluna):
-        tabuleiroAux[linha][coluna] = self.id
-
     @abstractmethod
     def jogar(self, tabuleiro):
         pass
