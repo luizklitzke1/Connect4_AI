@@ -1,106 +1,67 @@
 from defines import *
 from agente import Agente
 from tabuleiro import Tabuleiro
+import random
 
 class AgenteIA(Agente):
+
+    #Valor para um determinado grupo de 4 espaços - Jonathan C.T. Kuo
+    def calculaHeuristicaGrupo(self, grupo, idAgente):
+        idAdversario = AGENTE_2 if self.getId() ==  AGENTE_1 else AGENTE_1
+
+        valorHeuristicaGrupo = 0
+
+        if grupo.count(idAgente) == 4:
+            valorHeuristicaGrupo += INFINITO_POSITIVO
+
+        if (grupo.count(idAgente) == 3 and grupo.count(AGENTE_VAZIO) == 1):
+            valorHeuristicaGrupo += VALOR_HEURISTICA_ALTO
+
+        if (grupo.count(idAgente) == 2 and grupo.count(AGENTE_VAZIO) == 2):
+            valorHeuristicaGrupo += VALOR_HEURISTICA_MEDIO
+
+        if (grupo.count(idAdversario) == 3 and grupo.count(AGENTE_VAZIO) == 1):
+            valorHeuristicaGrupo -= VALOR_HEURISTICA_ALTO
+
+        if idAgente == AGENTE_2: #AGENTE_2 sempre substrai
+            valorHeuristicaGrupo *= -1
+
+        return valorHeuristicaGrupo
+
     #Define o valor de um determinado estado do tabuleiro
-    def calculaHeuristica(self, tabuleiro):
+    def calculaHeuristicaTabuleiro(self, tabuleiro, idAgente):
         matriz = tabuleiro.getMatriz()
 
         valorHeuristica = 0
 
         #Dar pontos para coluna central - Isso da muito controle de campo
         for linha in range (tabuleiro.getLinhas()):
-            if (matriz[linha][tabuleiro.getColunas() // 2] == self.getId()):
-                valorHeuristica += VALOR_HEURISTICA_BAIXO // 2
+            if (matriz[linha][tabuleiro.getColunas() // 2] == idAgente):
+                valorHeuristica += VALOR_HEURISTICA_BAIXO
 
+        #Linhas horizontais
         for linha in range(tabuleiro.getLinhas()):
-            for coluna in range(tabuleiro.getColunas()):
+            for coluna in range(tabuleiro.getColunas() - 3):
+                horizontal = [ matriz[linha][coluna], matriz[linha][coluna + 1], matriz[linha][coluna + 2], matriz[linha][coluna + 3] ]
+                valorHeuristica += self.calculaHeuristicaGrupo(horizontal, idAgente)
 
-                try: #Linhas verticais
+        #Linhas verticais
+        for coluna in range(tabuleiro.getColunas()):
+            for linha in range(tabuleiro.getLinhas() - 3):
+                vertical = [ matriz[linha][coluna], matriz[linha + 1][coluna], matriz[linha + 2][coluna], matriz[linha + 3][coluna] ]
+                valorHeuristica += self.calculaHeuristicaGrupo(vertical, idAgente)
 
-                    #AGENTE_1 adiciona valor
-                    if matriz[linha][coluna] == matriz[linha + 1][coluna] == AGENTE_1:
-                        valorHeuristica += VALOR_HEURISTICA_BAIXO
-                    if matriz[linha][coluna] == matriz[linha + 1][coluna] == matriz[linha + 2][coluna] == AGENTE_1:
-                        valorHeuristica += VALOR_HEURISTICA_MEDIO
-                    if matriz[linha][coluna] == matriz[linha + 1][coluna] == matriz[linha + 2][coluna] == matriz[linha + 3][coluna] == AGENTE_1:
-                        valorHeuristica += VALOR_HEURISTICA_ALTO
+        #Diagonais - Superior esquerdo para inferior direito
+        for linha in range(tabuleiro.getLinhas() - 3):
+            for coluna in range(tabuleiro.getColunas() - 3):
+                diagonal = [ matriz[linha][coluna], matriz[linha + 1][coluna + 1], matriz[linha + 2][coluna + 2], matriz[linha + 3][coluna + 3] ]
+                valorHeuristica += self.calculaHeuristicaGrupo(diagonal, idAgente)
 
-                    #AGENTE_2 subtrai valor
-                    if matriz[linha][coluna] == matriz[linha + 1][coluna] == AGENTE_2:
-                        valorHeuristica -= VALOR_HEURISTICA_BAIXO
-                    if matriz[linha][coluna] == matriz[linha + 1][coluna] == matriz[linha + 2][coluna] == AGENTE_2:
-                        valorHeuristica -= VALOR_HEURISTICA_MEDIO
-                    if matriz[linha][coluna] == matriz[linha + 1][coluna] == matriz[linha + 2][coluna] == matriz[linha + 3][coluna] == AGENTE_2:
-                        valorHeuristica -= VALOR_HEURISTICA_ALTO
-
-
-                except IndexError:
-                    pass
-
-                try: #Linhas horizontais
-
-                    #AGENTE_1 adiciona valor
-                    if matriz[linha][coluna] == matriz[linha][coluna + 1] == AGENTE_1:
-                        valorHeuristica += VALOR_HEURISTICA_BAIXO
-                    if matriz[linha][coluna] == matriz[linha][coluna + 1] == matriz[linha][coluna + 2] == AGENTE_1:
-                        valorHeuristica += VALOR_HEURISTICA_MEDIO
-                    if matriz[linha][coluna] == matriz[linha][coluna + 1] == matriz[linha][coluna + 2] == matriz[linha][coluna + 3] == AGENTE_1:
-                        valorHeuristica += VALOR_HEURISTICA_ALTO
-
-                    #AGENTE_2 subtrai valor
-                    if matriz[linha][coluna] == matriz[linha][coluna + 1] == AGENTE_2:
-                        valorHeuristica -= VALOR_HEURISTICA_BAIXO
-                    if matriz[linha][coluna] == matriz[linha][coluna + 1] == matriz[linha][coluna + 2] == AGENTE_2:
-                        valorHeuristica -= VALOR_HEURISTICA_MEDIO
-                    if matriz[linha][coluna] == matriz[linha][coluna + 1] == matriz[linha][coluna + 2] == matriz[linha][coluna + 3] == AGENTE_2:
-                        valorHeuristica -= VALOR_HEURISTICA_ALTO
-
-                except IndexError:
-                    pass
-
-                try: #Diagonais - Superior Esquerdo para Inferior Direito
-
-                    #AGENTE_1 adiciona valor
-                    if linha < tabuleiro.getLinhas() - 1 and coluna < tabuleiro.getColunas() - 1 and matriz[linha][coluna] == matriz[linha + 1][coluna + 1] == AGENTE_1:
-                        valorHeuristica += VALOR_HEURISTICA_BAIXO
-                    if linha < tabuleiro.getLinhas() - 2 and coluna < tabuleiro.getColunas() - 2 and matriz[linha][coluna] == matriz[linha + 1][coluna + 1] == matriz[linha + 2][coluna + 2] == AGENTE_1:
-                        valorHeuristica += VALOR_HEURISTICA_MEDIO
-                    if linha < tabuleiro.getLinhas() - 3 and coluna < tabuleiro.getColunas() - 3 and matriz[linha][coluna] == matriz[linha + 1][coluna + 1] == matriz[linha + 2][coluna + 2] == matriz[linha + 3][coluna + 3] == AGENTE_1:
-                        valorHeuristica += VALOR_HEURISTICA_ALTO
-
-                    #AGENTE_2 subtrai valor
-                    if linha < tabuleiro.getLinhas() - 1 and coluna < tabuleiro.getColunas() - 1 and matriz[linha][coluna] == matriz[linha + 1][coluna + 1] == AGENTE_2:
-                        valorHeuristica -= VALOR_HEURISTICA_BAIXO
-                    if linha < tabuleiro.getLinhas() - 2 and coluna < tabuleiro.getColunas() - 2 and matriz[linha][coluna] == matriz[linha + 1][coluna + 1] == matriz[linha + 2][coluna + 2] == AGENTE_2:
-                        valorHeuristica -= VALOR_HEURISTICA_MEDIO
-                    if linha < tabuleiro.getLinhas() - 3 and coluna < tabuleiro.getColunas() - 3 and matriz[linha][coluna] == matriz[linha + 1][coluna + 1] == matriz[linha + 2][coluna + 2] == matriz[linha + 3][coluna + 3] == AGENTE_2:
-                        valorHeuristica -= VALOR_HEURISTICA_ALTO
-
-                except IndexError:
-                    pass
-
-                try: #Diagonais - Inferior Esquerdo para Superior Direito
-
-                    #AGENTE_1 adiciona valor
-                    if linha > 0 and coluna < tabuleiro.getColunas() - 1 and matriz[linha][coluna] == matriz[linha - 1][coluna + 1] == AGENTE_1:
-                        valorHeuristica += VALOR_HEURISTICA_BAIXO
-                    if linha > 1 and coluna < tabuleiro.getColunas() - 2 and matriz[linha][coluna] == matriz[linha - 1][coluna + 1] == matriz[linha - 2][coluna + 2] == AGENTE_1:
-                        valorHeuristica += VALOR_HEURISTICA_BAIXO
-                    if linha > 2 and coluna < tabuleiro.getColunas() - 3 and matriz[linha][coluna] == matriz[linha - 1][coluna + 1] == matriz[linha - 2][coluna + 2] == matriz[linha - 3][coluna + 3] == AGENTE_1:
-                        valorHeuristica += VALOR_HEURISTICA_ALTO
-
-                    #AGENTE_2 subtrai valor
-                    if linha > 0 and coluna < tabuleiro.getColunas() - 1 and matriz[linha][coluna] == matriz[linha - 1][coluna + 1] == AGENTE_2:
-                        valorHeuristica -= VALOR_HEURISTICA_BAIXO
-                    if linha > 1 and coluna < tabuleiro.getColunas() - 2 and matriz[linha][coluna] == matriz[linha - 1][coluna + 1] == matriz[linha - 2][coluna + 2] == AGENTE_2:
-                        valorHeuristica -= VALOR_HEURISTICA_BAIXO
-                    if linha > 2 and coluna < tabuleiro.getColunas() - 3 and matriz[linha][coluna] == matriz[linha - 1][coluna + 1] == matriz[linha - 2][coluna + 2] == matriz[linha - 3][coluna + 3] == AGENTE_2:
-                        valorHeuristica -= VALOR_HEURISTICA_ALTO
-
-                except IndexError:
-                    pass
+        #Diagonais - Inferior esquerdo para superior direito
+        for linha in range(tabuleiro.getLinhas() - 3):
+            for coluna in range(tabuleiro.getColunas() - 3):
+                diagonal = [ matriz[linha][coluna + 3], matriz[linha + 1][coluna + 2], matriz[linha + 2][coluna + 1], matriz[linha + 3][coluna] ]
+                valorHeuristica += self.calculaHeuristicaGrupo(diagonal, idAgente)
 
         return valorHeuristica       
 
@@ -110,8 +71,8 @@ class AgenteIA(Agente):
 
         idAdversario = AGENTE_2 if self.getId() ==  AGENTE_1 else AGENTE_1
 
-        vitoriaAgente     = tabuleiro.verificarVitoria(self.getId())
-        vitoriaAdversario = tabuleiro.verificarVitoria(idAdversario)
+        vitoriaAgente     = tabuleiro.verificaEstado(self.getId()) == VITORIA
+        vitoriaAdversario = tabuleiro.verificaEstado(idAdversario) == VITORIA
 
         posicaoTerminal = len(colunasLivres) == 0 or vitoriaAgente or vitoriaAdversario
 
@@ -126,11 +87,11 @@ class AgenteIA(Agente):
                     return (None, 0) #Nenhuma jogada válida
                 
             else: #Profundidade zero == ultimo nó possivel de expandir
-                return (None, self.calculaHeuristica(tabuleiro))
+                return (None, self.calculaHeuristicaTabuleiro(tabuleiro, idAgente))
             
         if idAgente == AGENTE_1: #Maximiza o primeiro
             valorHeuristica = INFINITO_NEGATIVO
-            colunaRet = None
+            colunaRet = random.choice(colunasLivres)
 
             for coluna in colunasLivres:
                 #Copia auxiliar do tabuleiro para avaliar as variações em recursivo / Implementação de __copy__ não estava funcionando
@@ -151,7 +112,7 @@ class AgenteIA(Agente):
 
         elif idAgente == AGENTE_2: #Minimiza o segundo
             valorHeuristica = INFINITO_POSITIVO
-            colunaRet = None
+            colunaRet = random.choice(colunasLivres)
 
             for coluna in colunasLivres:
                 #Copia auxiliar do tabuleiro para avaliar as variações em recursivo / Implementação de __copy__ não estava funcionando
