@@ -9,6 +9,11 @@ class AgenteIA(Agente):
 
         valorHeuristica = 0
 
+        #Dar pontos para coluna central - Isso da muito controle de campo
+        for linha in range (tabuleiro.getLinhas()):
+            if (matriz[linha][tabuleiro.getColunas() // 2] == self.getId()):
+                valorHeuristica += VALOR_HEURISTICA_BAIXO // 2
+
         for linha in range(tabuleiro.getLinhas()):
             for coluna in range(tabuleiro.getColunas()):
 

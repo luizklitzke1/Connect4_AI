@@ -67,7 +67,6 @@ class Tabuleiro():
 
     #Retorna true caso o agente tenha vencido com o ultimo movimento
     def verificarVitoria(self, agente):
-
         #Quatro peças na horizontal
         for linha in range(self.getLinhas()):
             for coluna in range(self.getColunas() - 3):
@@ -80,18 +79,20 @@ class Tabuleiro():
                 if (self.getMatriz()[linha][coluna] == agente and self.getMatriz()[linha + 1][coluna] == agente and self.getMatriz()[linha + 2][coluna] == agente and self.getMatriz()[linha + 3][coluna] == agente):
                     return True
                 
+        #Quatro peças em uma diagonal - Superior esquerdo para inferior direito
+        for coluna in range(self.getColunas() - 3):
+            for linha in range(self.getLinhas() - 3):
+                if (self.getMatriz()[linha][coluna] == agente and self.getMatriz()[linha + 1][coluna +1] == agente and self.getMatriz()[linha + 2][coluna + 2] == agente and self.getMatriz()[linha + 3][coluna + 3] == agente):
+                    return True
+            
         #Quatro peças em uma diagonal
         for coluna in range(self.getColunas() - 3):
             for linha in range(self.getLinhas() - 3):
-                
-                #Superior esquerdo para inferior direito
                 if (self.getMatriz()[linha][coluna] == agente and self.getMatriz()[linha + 1][coluna +1] == agente and self.getMatriz()[linha + 2][coluna + 2] == agente and self.getMatriz()[linha + 3][coluna + 3] == agente):
                     return True
-                
-                #Inferior esquerdo para superior direito
-                if (self.getMatriz()[self.getLinhas() - linha - 1][self.getColunas() - coluna - 1] == agente and self.getMatriz()[self.getLinhas() - linha - 2][self.getColunas() - coluna - 2] == agente and self.getMatriz()[self.getLinhas() - linha - 3][self.getColunas() - coluna - 3] == agente and self.getMatriz()[self.getLinhas() - linha - 4][self.getColunas() - coluna - 4] == agente):
+                elif (self.getMatriz()[linha][coluna + 3] == agente and self.getMatriz()[linha + 1][coluna + 2] == agente and self.getMatriz()[linha + 2][coluna + 1] == agente and self.getMatriz()[linha + 3][coluna] == agente):
                     return True
-                
+    
         return False
     
     #Retorna coluna corespondente à uma posição X na tela
