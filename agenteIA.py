@@ -11,20 +11,15 @@ class AgenteIA(Agente):
 
         valorHeuristicaGrupo = 0
 
-        if grupo.count(idAgente) == 4:
-            valorHeuristicaGrupo += INFINITO_POSITIVO
-
         if (grupo.count(idAgente) == 3 and grupo.count(AGENTE_VAZIO) == 1):
-            valorHeuristicaGrupo += VALOR_HEURISTICA_ALTO
+            valorHeuristicaGrupo += 100
 
         if (grupo.count(idAgente) == 2 and grupo.count(AGENTE_VAZIO) == 2):
-            valorHeuristicaGrupo += VALOR_HEURISTICA_MEDIO
+            valorHeuristicaGrupo += 45
 
+        #Descontar apenas em casos que já quase da ruim, senão fica muito protetivo e não ataca
         if (grupo.count(idAdversario) == 3 and grupo.count(AGENTE_VAZIO) == 1):
-            valorHeuristicaGrupo -= VALOR_HEURISTICA_ALTO
-
-        if idAgente == AGENTE_2: #AGENTE_2 sempre substrai
-            valorHeuristicaGrupo *= -1
+            valorHeuristicaGrupo -= 90
 
         return valorHeuristicaGrupo
 
@@ -36,8 +31,8 @@ class AgenteIA(Agente):
 
         #Dar pontos para coluna central - Isso da muito controle de campo
         for linha in range (tabuleiro.getLinhas()):
-            if (matriz[linha][tabuleiro.getColunas() // 2] == idAgente):
-                valorHeuristica += VALOR_HEURISTICA_BAIXO
+           if (matriz[linha][tabuleiro.getColunas() // 2] == idAgente):
+               valorHeuristica += 50
 
         #Linhas horizontais
         for linha in range(tabuleiro.getLinhas()):
@@ -66,30 +61,28 @@ class AgenteIA(Agente):
         return valorHeuristica       
 
     #"Algorithms Explained – minimax and alpha-beta pruning" - https://www.youtube.com/watch?v=l-hh51ncgDI&ab_channel=SebastianLague
-    def buscaColunaMinMax(self, tabuleiro, profundidade, alpha, beta, idAgente):
+    def buscaColunaMinMax(self, tabuleiro, profundidade, alpha, beta, maximizar):
         colunasLivres = tabuleiro.getListaColunasLivres()
 
-        idAdversario = AGENTE_2 if self.getId() ==  AGENTE_1 else AGENTE_1
+        vitoriaAgente1 = tabuleiro.verificaEstado(AGENTE_1) == VITORIA
+        vitoriaAgente2 = tabuleiro.verificaEstado(AGENTE_2) == VITORIA
 
-        vitoriaAgente     = tabuleiro.verificaEstado(self.getId()) == VITORIA
-        vitoriaAdversario = tabuleiro.verificaEstado(idAdversario) == VITORIA
-
-        posicaoTerminal = len(colunasLivres) == 0 or vitoriaAgente or vitoriaAdversario
+        posicaoTerminal = len(colunasLivres) == 0 or vitoriaAgente1 or vitoriaAgente2
 
         if (profundidade == 0 or posicaoTerminal):
 
             if posicaoTerminal:
-                if vitoriaAgente:
-                    return (None, INFINITO_POSITIVO)
-                elif vitoriaAdversario:
+                if vitoriaAgente1:
                     return (None, INFINITO_NEGATIVO)
+                elif vitoriaAgente2:
+                    return (None, INFINITO_POSITIVO)
                 else:
                     return (None, 0) #Nenhuma jogada válida
                 
             else: #Profundidade zero == ultimo nó possivel de expandir
-                return (None, self.calculaHeuristicaTabuleiro(tabuleiro, idAgente))
+                return (None, self.calculaHeuristicaTabuleiro(tabuleiro, AGENTE_2))
             
-        if idAgente == AGENTE_1: #Maximiza o primeiro
+        if maximizar:
             valorHeuristica = INFINITO_NEGATIVO
             colunaRet = random.choice(colunasLivres)
 
@@ -98,7 +91,7 @@ class AgenteIA(Agente):
                 tabuleiroAux = Tabuleiro(tabuleiro.getLinhas(), tabuleiro.getColunas(), tabuleiro.getMatriz().copy())
                 tabuleiroAux.posiciona(coluna, AGENTE_2)
 
-                heuristicaFilho = self.buscaColunaMinMax(tabuleiroAux, profundidade - 1, alpha, beta, AGENTE_2)[1]
+                heuristicaFilho = self.buscaColunaMinMax(tabuleiroAux, profundidade - 1, alpha, beta, False)[1]
                 if heuristicaFilho > valorHeuristica:
                     valorHeuristica = heuristicaFilho
                     colunaRet = coluna
@@ -110,7 +103,7 @@ class AgenteIA(Agente):
 
             return colunaRet, valorHeuristica
 
-        elif idAgente == AGENTE_2: #Minimiza o segundo
+        else:
             valorHeuristica = INFINITO_POSITIVO
             colunaRet = random.choice(colunasLivres)
 
@@ -119,7 +112,7 @@ class AgenteIA(Agente):
                 tabuleiroAux = Tabuleiro(tabuleiro.getLinhas(), tabuleiro.getColunas(), tabuleiro.getMatriz().copy())
                 tabuleiroAux.posiciona(coluna, AGENTE_1)
 
-                heuristicaFilho = self.buscaColunaMinMax(tabuleiroAux, profundidade - 1, alpha, beta, AGENTE_1)[1]
+                heuristicaFilho = self.buscaColunaMinMax(tabuleiroAux, profundidade - 1, alpha, beta, True)[1]
                 if heuristicaFilho < valorHeuristica:
                     valorHeuristica = heuristicaFilho
                     colunaRet = coluna
@@ -132,6 +125,6 @@ class AgenteIA(Agente):
             return colunaRet, valorHeuristica
         
     def onJogar(self, tabuleiro, tela):
-        coluna, valorMinMax = self.buscaColunaMinMax(tabuleiro, tabuleiro.getLinhas() - 1, INFINITO_NEGATIVO, INFINITO_POSITIVO, AGENTE_2 if self.getId() ==  AGENTE_1 else AGENTE_1)
+        coluna, valorMinMax = self.buscaColunaMinMax(tabuleiro, tabuleiro.getLinhas() - 1, INFINITO_NEGATIVO, INFINITO_POSITIVO, False if self.getId() ==  AGENTE_1 else True)
 
         tabuleiro.posiciona(coluna, self.getId())
