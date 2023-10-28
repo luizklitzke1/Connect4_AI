@@ -27,5 +27,5 @@ if __name__ == "__main__":
             if estado == VITORIA or estado == EMPATE:
                 tabuleiroReal.anunciaEstado(tela, estado, agente.getId())
 
-                hold = input("") #Segurar a tela aberta
+                hold = input("") #Segurar a tela aberta até algum imput do usuario
                 break

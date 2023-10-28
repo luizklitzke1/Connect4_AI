@@ -13,6 +13,7 @@ class Jogador(Agente):
             coluna = COLUNA_NAO_SELECIONADA
 
             for event in pg.event.get():
+                
                 if event.type == pg.MOUSEMOTION:
                     #Limpa o fundo
                     pg.draw.rect(tela, COR_VAZIO, (0, TAMANHO_ESPACO / 2, LARGURA_DISPLAY , TAMANHO_ESPACO))

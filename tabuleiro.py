@@ -6,10 +6,10 @@ from defines import *
 class Tabuleiro():
     
     def __init__(self, linhas, colunas, matriz = None):
-        self.setLinhas(linhas)
+        self.setLinhas (linhas )
         self.setColunas(colunas)
 
-        if matriz is None:
+        if matriz is None: #Matriz limpa, preenchida por zeros
             self.matriz = np.zeros((self.getLinhas(), self.getColunas()))
         else:
             self.matriz = matriz
@@ -23,8 +23,7 @@ class Tabuleiro():
         return COR_VAZIO
 
     def printMatriz(self, tela):
-
-        pg.draw.rect(tela, COR_TABULEIRO, pg.Rect(X_INICIO_TABULEIRO, Y_INICIO_TABULEIRO, self.getColunas() * TAMANHO_ESPACO, self.getLinhas() * TAMANHO_ESPACO))
+        pg.draw.rect(tela, COR_TABULEIRO, pg.Rect(X_INICIO_TABULEIRO - OFFSET_TABULEIRO, Y_INICIO_TABULEIRO, self.getColunas() * TAMANHO_ESPACO + OFFSET_TABULEIRO * 2, self.getLinhas() * TAMANHO_ESPACO + OFFSET_TABULEIRO / 2))
 
         matriz = self.getMatriz()
 
@@ -59,7 +58,7 @@ class Tabuleiro():
         linhaPosicionar = self.getPosicaoLivreColuna(coluna)
 
         if linhaPosicionar == LINHA_INVALIDA:
-            return False #Coluna inválida
+            return False #Coluna completamente preenchida
         
         self.getMatriz()[linhaPosicionar][coluna] = IdAgente
         return True
@@ -67,9 +66,6 @@ class Tabuleiro():
 
     #Retorna true caso o agente tenha vencido com o ultimo movimento
     def verificaEstado(self, agente):
-        if len(self.getListaColunasLivres()) == 0:
-            return EMPATE
-
         #Quatro peças na horizontal
         for linha in range(self.getLinhas()):
             for coluna in range(self.getColunas() - 3):
@@ -90,6 +86,9 @@ class Tabuleiro():
                 elif (self.getMatriz()[linha][coluna + 3] == agente and self.getMatriz()[linha + 1][coluna + 2] == agente and self.getMatriz()[linha + 2][coluna + 1] == agente and self.getMatriz()[linha + 3][coluna] == agente):
                     return VITORIA
 
+        if len(self.getListaColunasLivres()) == 0:
+            return EMPATE
+        
         return ANDAMENTO
     
     #Retorna coluna corespondente à uma posição X na tela

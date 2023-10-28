@@ -29,7 +29,8 @@ class AgenteIA(Agente):
 
         valorHeuristica = 0
 
-        #Dar pontos para coluna central - Isso da muito controle de campo
+        #Dar pontos para coluna central
+        # Isso da muito controle de campo caso não possua nenhuma jogada melhor de linha
         for linha in range (tabuleiro.getLinhas()):
            if (matriz[linha][tabuleiro.getColunas() // 2] == idAgente):
                valorHeuristica += 50
@@ -46,17 +47,17 @@ class AgenteIA(Agente):
                 vertical = [ matriz[linha][coluna], matriz[linha + 1][coluna], matriz[linha + 2][coluna], matriz[linha + 3][coluna] ]
                 valorHeuristica += self.calculaHeuristicaGrupo(vertical, idAgente)
 
-        #Diagonais - Superior esquerdo para inferior direito
+        #Diagonais
         for linha in range(tabuleiro.getLinhas() - 3):
             for coluna in range(tabuleiro.getColunas() - 3):
-                diagonal = [ matriz[linha][coluna], matriz[linha + 1][coluna + 1], matriz[linha + 2][coluna + 2], matriz[linha + 3][coluna + 3] ]
-                valorHeuristica += self.calculaHeuristicaGrupo(diagonal, idAgente)
 
-        #Diagonais - Inferior esquerdo para superior direito
-        for linha in range(tabuleiro.getLinhas() - 3):
-            for coluna in range(tabuleiro.getColunas() - 3):
-                diagonal = [ matriz[linha][coluna + 3], matriz[linha + 1][coluna + 2], matriz[linha + 2][coluna + 1], matriz[linha + 3][coluna] ]
-                valorHeuristica += self.calculaHeuristicaGrupo(diagonal, idAgente)
+                #Superior esquerdo para inferior direito
+                diagonal1 = [ matriz[linha][coluna], matriz[linha + 1][coluna + 1], matriz[linha + 2][coluna + 2], matriz[linha + 3][coluna + 3] ]
+                valorHeuristica += self.calculaHeuristicaGrupo(diagonal1, idAgente)
+
+                # Inferior esquerdo para superior direito
+                diagonal2 = [ matriz[linha][coluna + 3], matriz[linha + 1][coluna + 2], matriz[linha + 2][coluna + 1], matriz[linha + 3][coluna] ]
+                valorHeuristica += self.calculaHeuristicaGrupo(diagonal2, idAgente)
 
         return valorHeuristica       
 
@@ -87,7 +88,7 @@ class AgenteIA(Agente):
             colunaRet = random.choice(colunasLivres)
 
             for coluna in colunasLivres:
-                #Copia auxiliar do tabuleiro para avaliar as variações em recursivo / Implementação de __copy__ não estava funcionando
+                #Copia auxiliar do tabuleiro para avaliar as variações em recursivo
                 tabuleiroAux = Tabuleiro(tabuleiro.getLinhas(), tabuleiro.getColunas(), tabuleiro.getMatriz().copy())
                 tabuleiroAux.posiciona(coluna, AGENTE_2)
 
@@ -108,7 +109,7 @@ class AgenteIA(Agente):
             colunaRet = random.choice(colunasLivres)
 
             for coluna in colunasLivres:
-                #Copia auxiliar do tabuleiro para avaliar as variações em recursivo / Implementação de __copy__ não estava funcionando
+                #Copia auxiliar do tabuleiro para avaliar as variações em recursivo
                 tabuleiroAux = Tabuleiro(tabuleiro.getLinhas(), tabuleiro.getColunas(), tabuleiro.getMatriz().copy())
                 tabuleiroAux.posiciona(coluna, AGENTE_1)
 
@@ -125,6 +126,6 @@ class AgenteIA(Agente):
             return colunaRet, valorHeuristica
         
     def onJogar(self, tabuleiro, tela):
-        coluna, valorMinMax = self.buscaColunaMinMax(tabuleiro, tabuleiro.getLinhas() - 1, INFINITO_NEGATIVO, INFINITO_POSITIVO, False if self.getId() ==  AGENTE_1 else True)
+        coluna, valorMinMax = self.buscaColunaMinMax(tabuleiro, tabuleiro.getLinhas() - 1, INFINITO_NEGATIVO, INFINITO_POSITIVO, True)
 
         tabuleiro.posiciona(coluna, self.getId())
