@@ -6,7 +6,7 @@ AGENTE_1     = 1
 AGENTE_2     = 2
 
 #Indicadores de erro
-LINHA_INVALIDA = -1
+LINHA_INVALIDA         = -1
 COLUNA_NAO_SELECIONADA = -1
 
 #Cores para representação em tela
@@ -29,7 +29,7 @@ TAMANHO_ESPACO = 70
 RAIO_PECA = TAMANHO_ESPACO / 2 - 3
 X_INICIO_TABULEIRO = 150
 Y_INICIO_TABULEIRO = 120
-OFFSET_TABULEIRO = 40
+OFFSET_TABULEIRO   = 40
 
 #Constantes matemáticas para min-max
 INFINITO_POSITIVO =  math.inf

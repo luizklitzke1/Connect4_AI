@@ -62,7 +62,7 @@ class AgenteIA(Agente):
         return valorHeuristica       
 
     #"Algorithms Explained – minimax and alpha-beta pruning" - https://www.youtube.com/watch?v=l-hh51ncgDI&ab_channel=SebastianLague
-    def buscaColunaMinMax(self, tabuleiro, profundidade, alpha, beta, maximizar):
+    def buscaColunaMiniMax(self, tabuleiro, profundidade, alpha, beta, maximizar):
         colunasLivres = tabuleiro.getListaColunasLivres()
 
         vitoriaAgente1 = tabuleiro.verificaEstado(AGENTE_1) == VITORIA
@@ -92,7 +92,7 @@ class AgenteIA(Agente):
                 tabuleiroAux = Tabuleiro(tabuleiro.getLinhas(), tabuleiro.getColunas(), tabuleiro.getMatriz().copy())
                 tabuleiroAux.posiciona(coluna, AGENTE_2)
 
-                heuristicaFilho = self.buscaColunaMinMax(tabuleiroAux, profundidade - 1, alpha, beta, False)[1]
+                heuristicaFilho = self.buscaColunaMiniMax(tabuleiroAux, profundidade - 1, alpha, beta, False)[1]
                 if heuristicaFilho > valorHeuristica:
                     valorHeuristica = heuristicaFilho
                     colunaRet = coluna
@@ -113,7 +113,7 @@ class AgenteIA(Agente):
                 tabuleiroAux = Tabuleiro(tabuleiro.getLinhas(), tabuleiro.getColunas(), tabuleiro.getMatriz().copy())
                 tabuleiroAux.posiciona(coluna, AGENTE_1)
 
-                heuristicaFilho = self.buscaColunaMinMax(tabuleiroAux, profundidade - 1, alpha, beta, True)[1]
+                heuristicaFilho = self.buscaColunaMiniMax(tabuleiroAux, profundidade - 1, alpha, beta, True)[1]
                 if heuristicaFilho < valorHeuristica:
                     valorHeuristica = heuristicaFilho
                     colunaRet = coluna
@@ -126,6 +126,6 @@ class AgenteIA(Agente):
             return colunaRet, valorHeuristica
         
     def onJogar(self, tabuleiro, tela):
-        coluna, valorMinMax = self.buscaColunaMinMax(tabuleiro, tabuleiro.getLinhas() - 1, INFINITO_NEGATIVO, INFINITO_POSITIVO, True)
+        coluna, valorMiniMax = self.buscaColunaMiniMax(tabuleiro, tabuleiro.getLinhas() - 1, INFINITO_NEGATIVO, INFINITO_POSITIVO, True)
 
         tabuleiro.posiciona(coluna, self.getId())

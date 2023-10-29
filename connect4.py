@@ -7,6 +7,7 @@ import pygame as pg
 estado = ANDAMENTO
 tabuleiroReal = Tabuleiro(LINHAS, COLUNAS)
 
+#Basta trocar qual classe do agente aqui para ajustar ordem ou colocar IA x IA ou jogador x jogador
 agentes = [Jogador(AGENTE_1), AgenteIA(AGENTE_2)]
 
 pg.init()
